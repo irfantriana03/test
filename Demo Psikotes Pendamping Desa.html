@@ -1,0 +1,957 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Demo Psikotes Pendamping Desa</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@500;600;700&display=swap">
+<style>
+/* Konsep: aplikasi CBT yang tenang. Bilah atas biru tua, kartu putih di atas abu kebiruan,
+   satu aksen cerulean untuk pilihan terpilih. Tampilan panitia memakai bilah abu-arang agar jelas terpisah. */
+:root{
+  --bg:#EBEFF5; --surface:#FFFFFF; --surface-2:#F4F6FA;
+  --ink:#0F2342; --ink-2:#47576F; --line:#D3DAE6; --line-strong:#AEBBD0;
+  --navy:#14305C; --on-navy:#FFFFFF;
+  --bar:#0F2342; --on-bar:#EAF0FA; --bar-staff:#26303C; --stamp-bar:#FFD166;
+  --accent:#0B7A9B; --on-accent:#FFFFFF; --accent-tint:#E0F1F6; --accent-ink:#065A74; --accent-ring:rgba(11,122,155,.28);
+  --ok:#25703A; --ok-bg:#E1F2E4;
+  --warn:#85560A; --warn-bg:#FFF0CC; --warn-line:#D9A100;
+  --bad:#A8231B; --bad-bg:#FCE6E3; --alert:#B3261E;
+  --shadow:0 1px 2px rgba(15,35,66,.08),0 6px 20px rgba(15,35,66,.06);
+  --font-body:"Atkinson Hyperlegible",system-ui,"Segoe UI",Roboto,sans-serif;
+  --font-head:"IBM Plex Sans",system-ui,"Segoe UI",Roboto,sans-serif;
+  --font-mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0A1325; --surface:#111E38; --surface-2:#0D182E;
+    --ink:#E7EEFA; --ink-2:#A6B4CE; --line:#25365A; --line-strong:#3D5280;
+    --navy:#2F62B0; --on-navy:#FFFFFF;
+    --bar:#0C1830; --on-bar:#E7EEFA; --bar-staff:#1B2430; --stamp-bar:#FFD166;
+    --accent:#46C3E6; --on-accent:#04222D; --accent-tint:#10394A; --accent-ink:#9BE0F4; --accent-ring:rgba(70,195,230,.35);
+    --ok:#74D087; --ok-bg:#12331B;
+    --warn:#F2C14E; --warn-bg:#3A2B08; --warn-line:#C99A1A;
+    --bad:#FF9188; --bad-bg:#40181A; --alert:#C93A32;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 6px 20px rgba(0,0,0,.3);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0A1325; --surface:#111E38; --surface-2:#0D182E;
+  --ink:#E7EEFA; --ink-2:#A6B4CE; --line:#25365A; --line-strong:#3D5280;
+  --navy:#2F62B0; --on-navy:#FFFFFF;
+  --bar:#0C1830; --on-bar:#E7EEFA; --bar-staff:#1B2430; --stamp-bar:#FFD166;
+  --accent:#46C3E6; --on-accent:#04222D; --accent-tint:#10394A; --accent-ink:#9BE0F4; --accent-ring:rgba(70,195,230,.35);
+  --ok:#74D087; --ok-bg:#12331B;
+  --warn:#F2C14E; --warn-bg:#3A2B08; --warn-line:#C99A1A;
+  --bad:#FF9188; --bad-bg:#40181A; --alert:#C93A32;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 6px 20px rgba(0,0,0,.3);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:17px/1.55 var(--font-body);-webkit-text-size-adjust:100%}
+h1,h2,h3,h4{font-family:var(--font-head);margin:0;text-wrap:balance;line-height:1.25}
+p{margin:0}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible,[tabindex]:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.wrap{max-width:1240px;margin-inline:auto;padding-inline:clamp(16px,3vw,32px)}
+.ic{width:1.15em;height:1.15em;flex:none;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.muted{color:var(--ink-2)}
+.num{font-variant-numeric:tabular-nums}
+
+/* Bilah atas */
+.topbar{background:var(--bar);color:var(--on-bar)}
+.tb{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 20px;padding-block:12px}
+.tb-id{display:flex;flex-direction:column;min-width:0}
+.tb-eyebrow{font:700 .72rem var(--font-head);letter-spacing:.12em;text-transform:uppercase;opacity:.78}
+.tb-title{font:600 1.1rem var(--font-head)}
+.tb-right{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px}
+.demo{display:inline-flex;align-items:center;padding:4px 10px;border:1.5px dashed var(--stamp-bar);color:var(--stamp-bar);border-radius:6px;font:700 .74rem var(--font-head);letter-spacing:.09em;text-transform:uppercase;white-space:nowrap}
+.modebtn{display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:0 14px;border-radius:10px;border:1.5px solid rgba(234,240,250,.55);background:transparent;color:var(--on-bar);font:600 .95rem var(--font-head)}
+.modebtn:hover{background:rgba(234,240,250,.12)}
+.app[data-mode="panitia"] .topbar{background:var(--bar-staff)}
+
+.stage{padding-block:24px 110px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:24px;box-shadow:var(--shadow)}
+.eyebrow{font:700 .76rem var(--font-head);letter-spacing:.1em;text-transform:uppercase;color:var(--ink-2)}
+
+/* Tombol */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:52px;padding:0 22px;border-radius:12px;border:2px solid var(--line-strong);background:var(--surface);color:var(--ink);font:600 1.05rem var(--font-head);transition:border-color .15s,background .15s}
+.btn:hover:not(:disabled){border-color:var(--navy)}
+.btn.primary{background:var(--navy);border-color:var(--navy);color:var(--on-navy)}
+.btn.primary:hover:not(:disabled){filter:brightness(1.14)}
+.btn.lg{min-height:60px;font-size:1.15rem;padding:0 30px}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.flagbtn[aria-pressed="true"]{background:var(--warn-bg);border-color:var(--warn-line);color:var(--warn)}
+
+/* A. Beranda */
+.home{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.7fr);gap:24px;align-items:start}
+.hello h1{font-size:1.8rem;margin-block:6px 18px}
+.idl{display:grid;grid-template-columns:auto 1fr;gap:10px 18px;margin:0}
+.idl dt{color:var(--ink-2)}
+.idl dd{margin:0;font-weight:700}
+.idl .mono{font-family:var(--font-mono);font-weight:600}
+.status{display:inline-flex;padding:2px 10px;border-radius:999px;background:var(--surface-2);border:1px solid var(--line);font-weight:700;font-size:.9rem}
+.tests{display:flex;flex-direction:column;gap:18px}
+.tcard{display:grid;grid-template-columns:auto 1fr;gap:6px 20px}
+.tstep{grid-row:span 3;display:grid;place-items:center;width:56px;height:56px;border-radius:14px;background:var(--navy);color:var(--on-navy);font:700 1.5rem var(--font-head)}
+.tcard h2{font-size:1.35rem}
+.facts{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0}
+.fact{padding:3px 12px;border-radius:999px;background:var(--surface-2);border:1px solid var(--line);font-weight:700;font-size:.92rem}
+.tcard ul{margin:6px 0 0;padding-left:20px;color:var(--ink-2)}
+.tcard li{margin-block:2px}
+.startrow{display:flex;flex-wrap:wrap;align-items:center;gap:16px}
+
+/* B & E. Petunjuk */
+.ins{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:24px;align-items:start}
+.ins h1{font-size:1.7rem;margin-block:6px 18px}
+.rules{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:14px;counter-reset:r}
+.rules li{display:grid;grid-template-columns:34px 1fr;gap:12px;align-items:start;counter-increment:r}
+.rules li::before{content:counter(r);display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent-tint);color:var(--accent-ink);font:700 1rem var(--font-head)}
+.rules b{font-weight:700}
+.exbox{border:2px dashed var(--line-strong);border-radius:14px;padding:20px;background:var(--surface-2)}
+.exlbl{display:inline-block;margin-bottom:12px;padding:2px 10px;border-radius:6px;background:var(--surface);border:1px solid var(--line);font:700 .74rem var(--font-head);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-2)}
+.agree{display:flex;align-items:center;gap:14px;margin-block:22px 18px;padding:14px 16px;border:2px solid var(--line-strong);border-radius:12px;background:var(--surface);font-weight:700;cursor:pointer}
+.agree input{width:26px;height:26px;accent-color:var(--accent);flex:none}
+
+/* C. Layar soal */
+.thead{position:sticky;top:8px;z-index:20;display:grid;grid-template-columns:minmax(0,1fr) minmax(190px,280px) auto;gap:12px 28px;align-items:center;padding:14px 20px;background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);margin-bottom:20px}
+.thead h1{font-size:1.5rem}
+.steps{display:flex;flex-wrap:wrap;gap:6px;list-style:none;margin:8px 0 0;padding:0}
+.steps li{display:inline-flex;align-items:center;gap:6px;padding:2px 10px;border-radius:999px;border:1.5px solid var(--line-strong);font-size:.85rem;font-weight:700;color:var(--ink-2)}
+.steps li.done{background:var(--surface-2)}
+.steps li.on{background:var(--navy);border-color:var(--navy);color:var(--on-navy)}
+.prog b{font:600 1.3rem var(--font-mono)}
+.prog .pl{font-size:1.15rem}
+.pbar{height:8px;margin-top:8px;border-radius:4px;background:var(--line);overflow:hidden}
+.pbar i{display:block;height:100%;background:var(--accent);transition:width .2s}
+.timer{display:flex;flex-direction:column;align-items:center;min-width:164px;padding:8px 20px 10px;border-radius:12px;background:var(--navy);color:var(--on-navy)}
+.timer .tl{display:flex;align-items:center;gap:6px;font:700 .72rem var(--font-head);letter-spacing:.1em;text-transform:uppercase}
+.timer .tval{font:600 2.4rem/1.05 var(--font-mono);font-variant-numeric:tabular-nums}
+.timer .tn{display:none;font:700 .8rem var(--font-head)}
+.timer.low{background:var(--alert);color:#fff}
+.timer.low .tn{display:block}
+
+.tbody{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:24px;align-items:start}
+.qcard{padding:28px 30px}
+.lead{font-size:1.15rem;color:var(--ink-2);margin-bottom:10px}
+.stem{font:600 1.55rem/1.4 var(--font-head);margin-bottom:6px}
+.ask{font-size:1.2rem;margin-top:8px}
+.qgap{margin-top:22px}
+.opts{display:flex;flex-direction:column;gap:12px;margin-top:22px}
+.opt{display:flex;align-items:center;gap:16px;width:100%;min-height:68px;padding:14px 20px;text-align:left;border:2px solid var(--line);border-radius:12px;background:var(--surface);font-size:1.2rem;line-height:1.4;transition:border-color .12s,background .12s}
+.opt:hover{border-color:var(--accent)}
+.opt .lt{flex:none;display:grid;place-items:center;width:42px;height:42px;border-radius:50%;border:2px solid var(--line-strong);font:700 1.05rem var(--font-head);color:var(--ink-2)}
+.opt[aria-checked="true"]{border-color:var(--accent);background:var(--accent-tint);box-shadow:0 0 0 4px var(--accent-ring)}
+.opt[aria-checked="true"] .lt{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.opt[aria-checked="true"]::after{content:"Dipilih";margin-left:auto;padding-left:12px;font:700 .78rem var(--font-head);letter-spacing:.08em;text-transform:uppercase;color:var(--accent-ink)}
+.opts.figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(128px,1fr));gap:14px}
+.opts.figs .opt{flex-direction:column;align-items:center;gap:10px;padding:14px 10px;min-height:0}
+.opts.figs .opt::after{display:none}
+.figtile{display:inline-block;background:#fff;border:1px solid #C3CBD6;border-radius:10px;padding:6px;line-height:0}
+.figtile svg{width:84px;height:84px}
+.figrow{display:flex;flex-wrap:wrap;gap:12px;margin-top:16px}
+.figrow .figtile svg{width:92px;height:92px}
+.figmx .figtile svg{width:min(250px,calc(100vw - 110px));height:auto}
+.figmx,.figone{margin-top:16px}
+.figone .figtile svg{width:130px;height:130px}
+.scenario{margin-top:10px;padding:16px 18px;border-radius:12px;background:var(--surface-2);border:1px solid var(--line);font-size:1.2rem}
+.scenario .sl{display:block;margin-bottom:4px;font:700 .74rem var(--font-head);letter-spacing:.1em;text-transform:uppercase;color:var(--ink-2)}
+.scale{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:22px}
+.sc{min-height:88px;border:2px solid var(--line);border-radius:12px;background:var(--surface);font:700 2rem var(--font-head);color:var(--ink)}
+.sc:hover{border-color:var(--accent)}
+.sc[aria-checked="true"]{background:var(--accent);border-color:var(--accent);color:var(--on-accent);box-shadow:0 0 0 4px var(--accent-ring)}
+.sends{display:flex;justify-content:space-between;gap:16px;margin-top:10px;color:var(--ink-2);font-size:1.02rem}
+.mini{border-collapse:collapse;margin:8px 0 4px;font-size:1.1rem}
+.mini th,.mini td{border:1px solid var(--line-strong);padding:6px 18px;text-align:left}
+.mini th{background:var(--surface-2);font-family:var(--font-head)}
+.mini td:last-child{text-align:right;font-variant-numeric:tabular-nums}
+.phnote{margin-top:20px;padding:10px 14px;border:1.5px dashed var(--line-strong);border-radius:10px;color:var(--ink-2);font-size:.95rem}
+.actions{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;margin-top:18px}
+.actions .grp{display:flex;flex-wrap:wrap;gap:12px}
+
+.side{position:sticky;top:132px;padding:20px}
+.side h3{font-size:1.05rem;margin-bottom:12px}
+.ngrid{display:grid;gap:6px}
+.ngrid.c5{grid-template-columns:repeat(5,1fr)}
+.ngrid.c8{grid-template-columns:repeat(8,1fr);gap:5px}
+.cell{position:relative;aspect-ratio:1;min-height:32px;display:grid;place-items:center;border:2px solid var(--line-strong);border-radius:8px;background:var(--surface);font:600 .95rem var(--font-mono);color:var(--ink)}
+.c8 .cell{font-size:.8rem;border-radius:6px}
+.cell.ans{background:var(--navy);border-color:var(--navy);color:var(--on-navy)}
+.cell.flag{border-color:var(--warn-line);border-style:dashed}
+.cell.ans.flag{border-style:solid}
+.cell.cur{outline:3px solid var(--accent);outline-offset:2px}
+.cell .fm{position:absolute;top:-2px;right:-2px;width:0;height:0;border-style:solid;border-width:0 12px 12px 0;border-color:transparent var(--warn-line) transparent transparent;border-top-right-radius:6px}
+.legend{display:grid;grid-template-columns:1fr 1fr;gap:6px 10px;list-style:none;margin:16px 0 0;padding:0;font-size:.88rem;color:var(--ink-2)}
+.legend li{display:flex;align-items:center;gap:8px}
+.sw{position:relative;flex:none;width:18px;height:18px;border-radius:5px;border:2px solid var(--line-strong);background:var(--surface)}
+.sw.a{background:var(--navy);border-color:var(--navy)}
+.sw.f{border-color:var(--warn-line);border-style:dashed}
+.sw.c{outline:2px solid var(--accent);outline-offset:1px}
+.counts{margin-top:14px;font-weight:700}
+.rule{margin-top:10px;font-size:.9rem;color:var(--ink-2)}
+.democtl{margin-bottom:16px;padding:10px 12px;border:1.5px dashed var(--line-strong);border-radius:10px;display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:.82rem;color:var(--ink-2)}
+.democtl button{min-height:34px;padding:0 12px;border-radius:8px;border:1.5px solid var(--line-strong);background:var(--surface);font:600 .85rem var(--font-head)}
+.democtl button:hover{border-color:var(--navy)}
+
+/* D, F. Transisi dan selesai */
+.center{max-width:660px;margin:36px auto;text-align:center}
+.center h1{font-size:1.8rem;margin-block:14px 8px}
+.center p{font-size:1.15rem}
+.bigic{display:grid;place-items:center;width:76px;height:76px;margin:0 auto;border-radius:50%;background:var(--ok-bg);color:var(--ok)}
+.bigic .ic{width:38px;height:38px;stroke-width:2.4}
+.bigic.nv{background:var(--accent-tint);color:var(--accent-ink)}
+.nextbox{margin-block:22px;padding:18px 20px;border:1px solid var(--line);border-radius:12px;background:var(--surface-2);text-align:left}
+.nextbox b{display:block;font:700 1.3rem var(--font-head);margin-bottom:2px}
+
+/* Dialog */
+.overlay{position:fixed;inset:0;z-index:100;display:grid;place-items:center;padding:16px;background:rgba(8,16,32,.62)}
+.dialog{width:100%;max-width:520px;padding:28px;border-radius:16px;background:var(--surface);border:1px solid var(--line);box-shadow:0 20px 60px rgba(0,0,0,.4)}
+.dialog h2{font-size:1.4rem;margin-bottom:12px}
+.dialog p{margin-bottom:10px}
+.dialog .big{font:600 1.6rem var(--font-mono)}
+.dialog .btns{display:flex;flex-wrap:wrap;gap:12px;justify-content:flex-end;margin-top:20px}
+
+/* Navigasi cepat */
+.qnav{position:fixed;z-index:60;right:max(12px,env(safe-area-inset-right,0px));bottom:calc(12px + env(safe-area-inset-bottom,0px));max-width:calc(100vw - 24px);padding:8px 10px;border-radius:14px;background:var(--surface);border:1.5px solid var(--line-strong);box-shadow:0 8px 28px rgba(8,16,32,.28);font-size:14px}
+.qrow{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+.qlbl{display:inline-flex;align-items:center;padding:3px 8px;border:1.5px dashed var(--warn-line);border-radius:6px;color:var(--warn);font:700 .68rem var(--font-head);letter-spacing:.08em;text-transform:uppercase;white-space:nowrap}
+.qb{min-height:36px;padding:0 12px;border-radius:8px;border:1.5px solid var(--line);background:var(--surface-2);font:600 .92rem var(--font-head);white-space:nowrap}
+.qb:hover{border-color:var(--navy)}
+.qb[aria-current="true"]{background:var(--navy);border-color:var(--navy);color:var(--on-navy)}
+.qb.sm{min-height:30px;padding:0 10px;font-size:.84rem}
+.qrow2{margin-top:8px;padding-top:8px;border-top:1px solid var(--line)}
+.qrow2 .qt{font-size:.8rem;color:var(--ink-2);font-weight:700}
+
+/* G. Panel panitia */
+.panel{font-size:16px}
+.panel h1{font-size:1.7rem}
+.phead{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:10px 20px}
+.toolbar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px 16px;margin-block:16px 12px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:0 14px;border:1.5px solid var(--line-strong);border-radius:999px;background:var(--surface);font:600 .95rem var(--font-head)}
+.chip b{font-family:var(--font-mono);font-weight:600}
+.chip[aria-pressed="true"]{background:var(--navy);border-color:var(--navy);color:var(--on-navy)}
+.search input{min-height:42px;min-width:min(100%,290px);padding:0 14px;border:1.5px solid var(--line-strong);border-radius:10px;background:var(--surface);color:var(--ink);font:inherit}
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:14px;background:var(--surface);box-shadow:var(--shadow)}
+table.rt{width:100%;min-width:820px;border-collapse:collapse}
+.rt th{padding:12px 14px;text-align:left;background:var(--surface-2);border-bottom:1px solid var(--line);font:700 .76rem var(--font-head);letter-spacing:.07em;text-transform:uppercase;color:var(--ink-2);white-space:nowrap}
+.thb{display:inline-flex;align-items:center;gap:6px;padding:0;border:0;background:none;font:inherit;letter-spacing:inherit;text-transform:inherit;color:inherit}
+.thb::after{content:"\2195";opacity:.4}
+th[aria-sort="ascending"] .thb::after{content:"\25B2";opacity:1;color:var(--accent-ink)}
+th[aria-sort="descending"] .thb::after{content:"\25BC";opacity:1;color:var(--accent-ink)}
+.rt td{padding:12px 14px;border-bottom:1px solid var(--line);vertical-align:middle}
+.rt tbody tr{cursor:pointer}
+.rt tbody tr:last-child td{border-bottom:0}
+.rt tbody tr:hover td{background:var(--surface-2)}
+.rt tbody tr.sel td{background:var(--accent-tint)}
+.rt .nm{padding:0;border:0;background:none;font:700 1rem var(--font-head);color:var(--ink);text-align:left}
+.rt .mono{font-family:var(--font-mono);font-weight:500;font-size:.92rem;color:var(--ink-2)}
+.sn{font:600 1.15rem var(--font-mono)}
+.mb{display:block;width:90px;height:6px;margin-top:5px;border-radius:3px;background:var(--line);overflow:hidden}
+.mb i{display:block;height:100%}
+.mb.b i{background:var(--navy)}
+.mb.p i{background:var(--accent)}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:4px 12px 4px 8px;border-radius:999px;font:700 .9rem var(--font-head);white-space:nowrap}
+.pill.hijau{background:var(--ok-bg);color:var(--ok)}
+.pill.kuning{background:var(--warn-bg);color:var(--warn)}
+.pill.merah{background:var(--bad-bg);color:var(--bad)}
+.note{display:flex;gap:10px;align-items:flex-start;margin-top:12px;color:var(--ink-2);font-size:.95rem}
+.empty{padding:28px;text-align:center;color:var(--ink-2)}
+
+.dh{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px 24px;margin-top:28px;padding:18px 24px}
+.dh h2{font-size:1.5rem}
+.dh .meta{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;margin-top:6px;color:var(--ink-2)}
+.gab{text-align:right}
+.gab .gl{font:700 .72rem var(--font-head);letter-spacing:.09em;text-transform:uppercase;color:var(--ink-2)}
+.gab .gv{font:600 2.3rem/1.1 var(--font-mono)}
+.dgrid{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:20px;margin-top:20px;align-items:start}
+.dcol{display:flex;flex-direction:column;gap:20px;min-width:0}
+.dc h3{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:1.1rem;margin-bottom:14px}
+.dc h3 small{font:500 .85rem var(--font-body);color:var(--ink-2)}
+.scorebig{display:flex;align-items:baseline;gap:8px;margin-bottom:14px}
+.scorebig b{font:600 3.2rem/1 var(--font-mono)}
+.scorebig span{color:var(--ink-2)}
+.brow{display:grid;grid-template-columns:76px 1fr auto;align-items:center;gap:12px;margin-block:10px}
+.brow .bt{height:14px;border-radius:7px;background:var(--line);overflow:hidden}
+.brow .bt i{display:block;height:100%;border-radius:7px}
+.brow .bt.b i{background:var(--navy)}
+.brow .bt.p i{background:var(--accent)}
+.brow .bt.low i{background:var(--warn-line)}
+.brow .bv{font:600 1rem var(--font-mono);min-width:48px;text-align:right}
+.brow.lo .bn{font-weight:700}
+.pfwrap{display:block}
+.radar{min-width:0}
+.radar svg{display:block;width:100%;max-width:500px;margin-inline:auto;height:auto}
+.rl{fill:var(--ink-2);font:500 14px var(--font-body)}
+.rv{fill:var(--ink);font:600 16px var(--font-mono)}
+.rv.lo{fill:var(--warn)}
+.alist{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:0 32px;margin-top:10px;min-width:0}
+.arow{display:grid;grid-template-columns:1fr auto;gap:4px 12px;align-items:center;margin-block:12px}
+.arow .an{grid-column:1 / -1;font-size:.92rem}
+.arow.lo .an{font-weight:700}
+.arow .bt{height:12px;border-radius:6px;background:var(--line);overflow:hidden}
+.arow .bt i{display:block;height:100%;background:var(--accent)}
+.arow.lo .bt i{background:var(--warn-line)}
+.arow .bv{font:600 1rem var(--font-mono);min-width:34px;text-align:right}
+.vrow{display:grid;grid-template-columns:auto 1fr;gap:2px 10px;padding:10px 0;border-top:1px solid var(--line)}
+.vrow:first-of-type{border-top:0}
+.vrow .vi{grid-row:span 2;display:grid;place-items:center;width:26px;height:26px;border-radius:50%}
+.vrow .vi.ok{background:var(--ok-bg);color:var(--ok)}
+.vrow .vi.warn{background:var(--warn-bg);color:var(--warn)}
+.vrow .vi.bad{background:var(--bad-bg);color:var(--bad)}
+.vrow .vl{font-weight:700}
+.vrow .vv{color:var(--ink-2);font-size:.95rem}
+.fnote{margin-top:14px;padding:12px 14px;border-radius:10px;background:var(--surface-2);border:1px solid var(--line);font-size:.95rem}
+.fnote b{font-weight:700}
+.reason{margin-block:12px 4px}
+.saran{display:flex;flex-direction:column;gap:14px}
+.sa{padding:14px 16px;border-radius:12px;background:var(--surface-2);border:1px solid var(--line)}
+.sa h4{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:1.02rem;margin-bottom:6px}
+.sa h4 span{font:600 .95rem var(--font-mono);color:var(--warn)}
+.sa p{color:var(--ink)}
+
+@media (max-width:1100px){
+  .home,.ins,.tbody,.dgrid{grid-template-columns:minmax(0,1fr)}
+  .side{position:static}
+  .thead{grid-template-columns:minmax(0,1fr) auto}
+  .thead .prog{grid-column:1 / -1;order:3}
+}
+@media (max-width:640px){
+  body{font-size:16px}
+  .thead{grid-template-columns:minmax(0,1fr);padding:12px 14px;top:4px}
+  .thead .timer{order:-1;width:100%;flex-direction:row;justify-content:space-between;padding:6px 14px}
+  .timer .tval{font-size:1.9rem}
+  .qcard{padding:18px 16px}
+  .stem{font-size:1.3rem}
+  .opt{font-size:1.08rem;padding:12px 14px;gap:12px}
+  .sc{min-height:68px;font-size:1.6rem}
+  .scale{gap:8px}
+  .sends{font-size:.9rem}
+  .actions .btn{flex:1 1 100%}
+  .actions .grp{flex:1 1 100%}
+  .actions .grp .btn{flex:1}
+  .tcard{grid-template-columns:1fr}
+  .tcard .tstep{grid-row:auto}
+  .brow{grid-template-columns:60px 1fr auto}
+  .qnav{left:12px;right:12px}
+  .stage{padding-bottom:150px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="app" id="app" data-mode="peserta">
+  <header class="topbar" id="topbar"></header>
+  <main class="stage wrap" id="stage" tabindex="-1"></main>
+</div>
+<nav class="qnav" id="qnav" aria-label="Navigasi cepat demo"></nav>
+<div class="overlay" id="overlay" hidden></div>
+<div class="sr" id="live" aria-live="polite"></div>
+
+<script>
+(function(){
+'use strict';
+const $=(s,r)=>(r||document).querySelector(s);
+const fmt=n=>String(n).replace('.',',');
+const LET=['A','B','C','D','E'];
+
+/* ---------- Ikon ---------- */
+const P={
+  clock:'<circle cx="12" cy="13" r="8"/><path d="M12 9v4.5l3 1.5M9.5 3h5"/>',
+  flag:'<path d="M6 21V4"/><path d="M6 4h11l-2.2 4L17 12H6"/>',
+  check:'<path d="M5 12.5l4.5 4.5L19 7"/>',
+  left:'<path d="M15 5l-7 7 7 7"/>',
+  right:'<path d="M9 5l7 7-7 7"/>',
+  alert:'<path d="M12 4l9 16H3z"/><path d="M12 10v4.5M12 17.5v.01"/>',
+  x:'<circle cx="12" cy="12" r="9"/><path d="M9 9l6 6M15 9l-6 6"/>',
+  info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8v.01"/>',
+  up:'<path d="M6 15l6-6 6 6"/>',
+  down:'<path d="M6 9l6 6 6-6"/>'
+};
+const ic=(n,c)=>'<svg class="ic'+(c?' '+c:'')+'" viewBox="0 0 24 24" aria-hidden="true">'+P[n]+'</svg>';
+
+/* ---------- Gambar figural (hitam, putih, abu-abu) ---------- */
+const K='#111',G='#9AA3AD',W='#fff';
+const DX=[24,36,48],DY=[24,36,48];
+function dots(n,big){
+  let s='<svg viewBox="0 0 72 72" aria-hidden="true">';
+  s+=big?'<rect x="2" y="2" width="68" height="68" fill="#fff" stroke="'+K+'" stroke-width="3"/>':'<rect x="10" y="10" width="52" height="52" fill="#fff" stroke="'+K+'" stroke-width="3"/>';
+  for(let i=0;i<n;i++)s+='<circle cx="'+DX[i%3]+'" cy="'+DY[Math.floor(i/3)]+'" r="4.6" fill="'+K+'"/>';
+  return s+'</svg>';
+}
+function qbox(){
+  return '<svg viewBox="0 0 72 72" aria-hidden="true"><rect x="10" y="10" width="52" height="52" fill="#fff" stroke="'+K+'" stroke-width="3" stroke-dasharray="6 4"/><text x="36" y="47" text-anchor="middle" font-size="30" font-weight="700" fill="'+K+'" font-family="IBM Plex Sans,Arial,sans-serif">?</text></svg>';
+}
+function tri(cx,cy,s,fill,dir){
+  const h=s/2;
+  const pts=dir==='r'?(cx+h)+','+cy+' '+(cx-h)+','+(cy-h)+' '+(cx-h)+','+(cy+h):(cx-h)+','+cy+' '+(cx+h)+','+(cy-h)+' '+(cx+h)+','+(cy+h);
+  return '<polygon points="'+pts+'" fill="'+fill+'" stroke="'+K+'" stroke-width="2.4" stroke-linejoin="round"/>';
+}
+function matrixSvg(){
+  const sizes=[16,30,46],fills=[K,G,W];
+  let s='<svg viewBox="0 0 216 216" aria-hidden="true"><rect x="1.5" y="1.5" width="213" height="213" fill="#fff" stroke="#8A94A3" stroke-width="2"/><path d="M72 0V216M144 0V216M0 72H216M0 144H216" stroke="#C3CBD6" stroke-width="1.5"/>';
+  for(let r=0;r<3;r++)for(let c=0;c<3;c++){
+    const cx=36+72*c,cy=36+72*r;
+    if(r===2&&c===2)s+='<text x="'+cx+'" y="'+(cy+11)+'" text-anchor="middle" font-size="34" font-weight="700" fill="'+K+'" font-family="IBM Plex Sans,Arial,sans-serif">?</text>';
+    else s+=tri(cx,cy,sizes[c],fills[r],'l');
+  }
+  return s+'</svg>';
+}
+const cell1=inner=>'<svg viewBox="0 0 72 72" aria-hidden="true">'+inner+'</svg>';
+const FCELLS=[[1,0],[2,0],[0,1],[1,1],[1,2]];
+function fShape(tf){
+  let g='<g'+(tf?' transform="'+tf+'"':'')+' fill="'+K+'" stroke="#fff" stroke-width="1" stroke-linejoin="round">';
+  FCELLS.forEach(c=>{g+='<rect x="'+(c[0]*12)+'" y="'+(c[1]*12)+'" width="12" height="12"/>';});
+  return g+'</g>';
+}
+const fSvg=tf=>'<svg viewBox="-6 -6 48 48" aria-hidden="true">'+fShape(tf)+'</svg>';
+
+/* ---------- Bank butir contoh (fiktif; kunci/bobot tidak pernah dirender) ---------- */
+const TBL='<table class="mini"><thead><tr><th>Dusun</th><th>Penerima bantuan</th></tr></thead><tbody><tr><td>Dusun I</td><td>120</td></tr><tr><td>Dusun II</td><td>85</td></tr><tr><td>Dusun III</td><td>140</td></tr><tr><td>Dusun IV</td><td>55</td></tr></tbody></table>';
+const SAMPLE={
+  verbal:[
+    {t:'mc',lead:'Lengkapilah analogi berikut.',q:'Sepatu : Kaki = Topi : ?',o:['Baju','Kepala','Rambut','Tangan','Mata'],k:1},
+    {t:'mc',q:'Manakah yang tidak sejenis dengan yang lain?',o:['Camat','Kepala Desa','Bupati','Cangkul','Gubernur'],k:3},
+    {t:'mc',lead:'Semua fasilitator mengikuti pelatihan dasar. Sebagian fasilitator bertugas di wilayah pesisir.',q:'Kesimpulan manakah yang pasti benar?',o:['Sebagian fasilitator tidak mengikuti pelatihan dasar.','Tidak ada fasilitator yang bertugas di wilayah pesisir.','Semua orang yang mengikuti pelatihan dasar bertugas di wilayah pesisir.','Semua orang yang bertugas di wilayah pesisir adalah fasilitator.','Ada orang yang bertugas di wilayah pesisir dan mengikuti pelatihan dasar.'],k:4}
+  ],
+  numerik:[
+    {t:'mc',lead:'Perhatikan deret angka berikut.',q:'4, 8, 12, 16, 20, …',ask:'Angka berikutnya adalah …',o:['24','25','26','28','30'],k:0},
+    {t:'mc',lead:'Sebuah desa memiliki 1.250 keluarga. Sebanyak 40% di antaranya adalah keluarga petani.',q:'Berapa jumlah keluarga petani?',o:['400','500','625','750','1.000'],k:1},
+    {t:'mc',lead:'Penerima bantuan per dusun:',html:TBL,q:'Berapa persen penerima di Dusun III dari seluruh penerima?',o:['30%','35%','40%','45%','50%'],k:1}
+  ],
+  figural:[
+    {t:'mc',lead:'Perhatikan pola berikut.',fig:'<div class="figrow">'+[1,2,3,4].map(n=>'<span class="figtile">'+dots(n,false)+'</span>').join('')+'<span class="figtile">'+qbox()+'</span></div>',q:'Gambar manakah yang melengkapi kotak bertanda “?”',figOpts:true,
+      o:[dots(6,false),dots(5,false),dots(5,true),dots(4,false),dots(3,false)],k:1},
+    {t:'mc',lead:'Perhatikan matriks 3 × 3 berikut.',fig:'<div class="figmx"><span class="figtile">'+matrixSvg()+'</span></div>',q:'Gambar manakah yang mengisi kotak kosong?',figOpts:true,
+      o:[cell1(tri(36,36,30,W,'l')),cell1(tri(36,36,46,G,'l')),cell1(tri(36,36,46,W,'r')),cell1(tri(36,36,46,W,'l')),cell1('<rect x="13" y="13" width="46" height="46" fill="#fff" stroke="'+K+'" stroke-width="2.4"/>')],k:3},
+    {t:'mc',lead:'Gambar berikut diputar 90° searah jarum jam.',fig:'<div class="figone"><span class="figtile">'+fSvg('')+'</span></div>',q:'Manakah hasil putarannya?',figOpts:true,
+      o:[fSvg('translate(36 0) scale(-1 1)'),fSvg('rotate(-90 18 18)'),fSvg('rotate(90 18 18)'),fSvg('rotate(180 18 18)'),fSvg('rotate(90 18 18) translate(36 0) scale(-1 1)')],k:2}
+  ],
+  profil:[
+    {t:'lk',q:'Saya senang berbagi tugas dengan orang lain agar pekerjaan selesai lebih baik.',asp:0,neg:false},
+    {t:'lk',q:'Saya lebih suka mengerjakan semuanya sendiri karena kerja kelompok memakan waktu.',asp:0,neg:true},
+    {t:'lk',q:'Sebelum mengusulkan kegiatan di desa, saya berusaha memahami kebiasaan dan adat warga setempat.',asp:1,neg:false},
+    {t:'sjt',sc:'Tim pendamping di kecamatan Anda berbagi tugas menyusun laporan bulanan. Seorang rekan terlambat mengirim bagiannya sehingga laporan hampir melewati tenggat.',
+      o:['Menghubungi rekan itu, menanyakan kendalanya, dan menawarkan bantuan agar laporan tetap selesai tepat waktu.','Mengerjakan bagian rekan itu sendiri tanpa memberi tahu siapa pun.','Melaporkan keterlambatan rekan itu ke atasan sebelum bertanya kepada yang bersangkutan.','Mengirim laporan tanpa bagian rekan itu dan menjelaskan alasannya.'],w:[2,1,0,0]},
+    {t:'lk',q:"Untuk butir ini, pilih jawaban 'Sangat tidak setuju'.",val:'att'},
+    {t:'lk',q:'Saya mudah kehilangan semangat jika hasil kerja saya tidak segera terlihat.',asp:5,neg:true},
+    {t:'sjt',sc:'Anda akan menggelar sosialisasi program di sebuah dusun. Tokoh adat menyampaikan bahwa hari yang Anda pilih bertepatan dengan hari yang dihormati warga dan sebaiknya tidak ada kegiatan.',
+      o:['Tetap melaksanakan sesuai jadwal karena undangan sudah disebar.','Memindahkan jadwal dan memberi tahu warga seperlunya tanpa menjelaskan alasan.','Meminta tokoh adat memberi izin khusus supaya kegiatan tetap berjalan.','Menemui tokoh adat, mendengar pertimbangannya, lalu menyepakati hari baru bersama perangkat dusun.'],w:[0,1,0,2]},
+    {t:'lk',q:'Saya tidak pernah merasa kesal terhadap siapa pun.',val:'sd'},
+    {t:'sjt',sc:'Saat memeriksa data penerima bantuan di dusun, Anda menemukan beberapa nama ganda yang belum pernah dilaporkan siapa pun. Tenggat penyerahan data tinggal dua hari.',
+      o:['Menghapus semua nama yang tampak ganda tanpa konfirmasi.','Menyerahkan data apa adanya karena tenggat sudah dekat.','Memeriksa nama ganda itu bersama perangkat dusun, memperbaiki datanya, lalu melaporkan temuan kepada koordinator.','Memperbaiki sebisanya, menyerahkan data, dan menyampaikan temuan setelah tenggat.'],w:[0,0,2,1]},
+    {t:'lk',q:'Saya selalu menepati janji tanpa pengecualian sekali pun.',val:'sd'}
+  ]
+};
+const SECS={
+  verbal:{test:'b',no:1,name:'Verbal',n:15,min:10,desc:'analogi, klasifikasi, penalaran'},
+  numerik:{test:'b',no:2,name:'Numerik',n:15,min:10,desc:'deret angka, hitungan cerita, tabel'},
+  figural:{test:'b',no:3,name:'Figural',n:15,min:10,desc:'pola gambar, matriks, rotasi, cermin, lipat kertas'},
+  profil:{test:'p',no:0,name:'Profil Perilaku Kerja',n:64,min:30,desc:''}
+};
+const ORDER=['verbal','numerik','figural'];
+const ITEMS={};
+(function build(){
+  ['verbal','numerik','figural'].forEach(k=>{
+    const arr=SAMPLE[k].slice();
+    for(let i=arr.length;i<15;i++)arr.push({t:'mc',ph:true});
+    ITEMS[k]=arr;
+  });
+  const arr=SAMPLE.profil.slice();
+  const rest={lk:29,sjt:18,val:7};
+  const left0=64-arr.length;
+  for(let i=0;i<left0;i++){
+    const left=left0-i;let best='lk',bv=-1;
+    ['lk','sjt','val'].forEach(t=>{const v=rest[t]/left;if(v>bv){bv=v;best=t;}});
+    rest[best]--;
+    arr.push({t:best==='sjt'?'sjt':'lk',ph:true});
+  }
+  ITEMS.profil=arr;
+})();
+
+/* ---------- Data peserta fiktif (panel panitia) ---------- */
+const ASP=['Kerja sama','Kepekaan sosial-budaya','Fasilitasi & pengaruh','Inisiatif & keterbukaan','Tanggung jawab & ketelitian','Ketahanan lapangan'];
+const ASPH=ASP.map(a=>a.replace(/&/g,'&amp;'));
+const ASPL=[['Kerja sama'],['Kepekaan','sosial-budaya'],['Fasilitasi','& pengaruh'],['Inisiatif','& keterbukaan'],['Tanggung jawab','& ketelitian'],['Ketahanan','lapangan']];
+const PART=[
+  {no:1,id:'PD26-0101',nama:'Bayu Kurniawan',benar:28,sub:[10,9,9],pp:71,asp:[78,70,65,72,80,61],v:{att:[2,2],cons:[3,3],sd:3.5}},
+  {no:2,id:'PD26-0102',nama:'Lestari Wulandari',benar:36,sub:[13,12,11],pp:58,asp:[60,55,52,62,64,55],v:{att:[2,2],cons:[3,3],sd:4.8}},
+  {no:3,id:'PD26-0103',nama:'Made Sudarma',benar:20,sub:[7,6,7],pp:82,asp:[85,80,78,84,86,79],v:{att:[2,2],cons:[3,3],sd:3.8}},
+  {no:4,id:'PD26-0104',nama:'Nurul Hidayati',benar:32,sub:[11,10,11],pp:49,asp:[50,45,48,52,55,44],v:{att:[2,2],cons:[1,3],sd:3.3}},
+  {no:5,id:'PD26-0105',nama:'Andi Rahmawati',benar:25,sub:[9,8,8],pp:67,asp:[70,66,64,68,72,62],v:{att:[2,2],cons:[3,3],sd:3.6}}
+];
+const NUMW={1:'satu',2:'dua',3:'tiga'};
+PART.forEach(p=>{
+  p.bern=Math.round(p.benar/45*100);
+  p.gab=(p.bern+p.pp)/2;
+  const v=p.v,signs=[];
+  const attBad=v.att[1]-v.att[0],consBad=v.cons[1]-v.cons[0];
+  if(attBad>0)signs.push((NUMW[attBad]||attBad)+' cek perhatian gagal');
+  if(consBad>0)signs.push((NUMW[consBad]||consBad)+' dari '+(NUMW[v.cons[1]]||v.cons[1])+' pasangan butir konsistensi memberi jawaban yang tidak sejalan');
+  if(v.sd>=4.5)signs.push('rata-rata skala kesan baik tinggi ('+fmt(v.sd.toFixed(1))+' dari 5)');
+  p.nsign=attBad+consBad+(v.sd>=4.5?1:0);
+  p.signs=signs;
+  p.flag=p.nsign===0?'hijau':p.nsign===1?'kuning':'merah';
+});
+const SARAN=[
+  'Gali pengalaman bekerja dalam tim ketika ada rekan yang tidak sepaham atau terlambat menyelesaikan bagiannya. Tanyakan langkah yang diambil, cara membagi peran, dan hasil akhirnya. Perhatikan apakah peserta mencari titik temu atau cenderung bekerja sendiri.',
+  'Minta peserta menceritakan saat bekerja di lingkungan yang adat atau kebiasaannya berbeda dari miliknya. Tanyakan cara ia mencari tahu aturan setempat sebelum bertindak. Minta contoh ketika ia menyesuaikan cara kerja agar diterima warga.',
+  'Minta contoh memimpin pertemuan atau mengajak sekelompok orang menyepakati sesuatu. Tanyakan cara menghadapi peserta rapat yang pendiam atau yang terlalu dominan. Dalami bagaimana ia membuat warga mau terlibat tanpa memaksa.',
+  'Tanyakan hal baru yang pernah ia mulai tanpa diminta dan apa hasilnya. Gali sikapnya saat menerima kritik atau masukan dari orang lain. Perhatikan apakah ia mau mencoba cara lain ketika cara lamanya tidak berhasil.',
+  'Minta peserta menjelaskan cara ia memastikan pekerjaannya akurat, misalnya saat mengolah data atau laporan. Tanyakan apa yang ia lakukan ketika menemukan kesalahannya sendiri. Gali kebiasaannya menepati tenggat saat beban kerja menumpuk.',
+  'Tanyakan pengalaman bekerja dalam kondisi sulit, seperti medan jauh, fasilitas terbatas, atau hasil yang lambat terlihat. Gali cara peserta menjaga semangat dan tenaga dalam jangka panjang. Tanyakan kesiapannya jika ditempatkan jauh dari keluarga.'
+];
+function lowest(p){
+  const idx=p.asp.map((v,i)=>i).sort((a,b)=>p.asp[a]-p.asp[b]||a-b);
+  const cut=p.asp[idx[1]];
+  return idx.filter((i,n)=>n<2||p.asp[i]===cut);
+}
+
+/* ---------- State ---------- */
+const S={mode:'peserta',screen:'home',sec:null,cur:0,ans:{},flag:{},remaining:0,speed:1,chk:{ins1:false,ins2:false},ex:{ins1:null,ins2:null},modal:null,timeup:false,trans:null,tid:null,lowAnn:false,navMore:false,navOpen:true};
+const PS={sel:1,key:'no',dir:1,flt:'all',q:''};
+function resetAnswers(){
+  Object.keys(SECS).forEach(k=>{S.ans[k]={};S.flag[k]={};});
+  S.chk={ins1:false,ins2:false};S.ex={ins1:null,ins2:null};
+}
+resetAnswers();
+
+/* ---------- Navigasi layar ---------- */
+function go(screen,extra){
+  clearTimeout(S.tid);S.timeup=false;S.modal=null;S.screen=screen;
+  if(extra)Object.assign(S,extra);
+  render();window.scrollTo(0,0);
+}
+function startSec(key){
+  S.mode='peserta';S.sec=key;S.cur=0;S.remaining=SECS[key].min*60000;S.lowAnn=false;
+  go('test');
+}
+function finishSection(auto){
+  const sec=S.sec;S.modal=null;S.timeup=false;S.navOpen=true;
+  if(sec==='profil'){go('done');return;}
+  const next=ORDER[ORDER.indexOf(sec)+1]||'profil';
+  go('trans',{trans:{from:sec,next:next,auto:!!auto}});
+}
+function onTimeUp(){
+  S.timeup=true;S.modal=null;render();
+  S.tid=setTimeout(()=>finishSection(true),2200);
+}
+
+/* ---------- Timer ---------- */
+let lastT=performance.now();
+setInterval(()=>{
+  const now=performance.now(),dt=now-lastT;lastT=now;
+  if(S.mode!=='peserta'||S.screen!=='test'||S.timeup)return;
+  S.remaining-=dt*S.speed;
+  if(S.remaining<=0){S.remaining=0;updateTimer();onTimeUp();return;}
+  updateTimer();
+},200);
+function mmss(ms){const s=Math.max(0,Math.ceil(ms/1000));return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');}
+function updateTimer(){
+  const t=$('#timer');if(!t)return;
+  const low=S.remaining<120000;
+  $('#tval').textContent=mmss(S.remaining);
+  t.classList.toggle('low',low);
+  if(low&&!S.lowAnn){S.lowAnn=true;$('#live').textContent='Sisa waktu kurang dari 2 menit.';}
+}
+
+/* ---------- Bagian layar ---------- */
+function topbarHtml(){
+  const staff=S.mode==='panitia';
+  return '<div class="wrap tb"><div class="tb-id"><span class="tb-eyebrow">'+(staff?'Tampilan panitia / pewawancara':'Tampilan peserta')+'</span><span class="tb-title">Rekrutmen Pendamping Desa 2026 — Demo</span></div>'+
+    '<div class="tb-right"><span class="demo">DEMO — data fiktif</span>'+
+    '<button class="modebtn" data-act="mode" data-fid="mode">'+(staff?ic('left')+'Kembali ke tampilan peserta':'Beralih ke tampilan panitia'+ic('right'))+'</button></div></div>';
+}
+function navActive(){
+  if(S.mode==='panitia')return 'panel';
+  if(S.screen==='home')return 'home';
+  if(S.screen==='ins1')return 'ins1';
+  if(S.screen==='ins2')return 'ins2';
+  if(S.screen==='done')return 'done';
+  if(S.screen==='trans')return S.trans&&S.trans.next==='profil'?'ins2':'ins1';
+  if(S.screen==='test')return SECS[S.sec].test==='b'?'ins1':'ins2';
+  return '';
+}
+function navHtml(){
+  const act=navActive();
+  const items=[['home','Beranda'],['ins1','Tes Bernalar'],['ins2','Profil Perilaku'],['done','Selesai'],['panel','Panel Hasil']];
+  let h='<div class="qrow"><span class="qlbl">DEMO — data fiktif</span>';
+  if(S.navOpen){
+    items.forEach(it=>{h+='<button class="qb" data-act="nav" data-to="'+it[0]+'" data-fid="n'+it[0]+'"'+(act===it[0]?' aria-current="true"':'')+'>'+it[1]+'</button>';});
+  }
+  if(S.navOpen)h+='<button class="qb sm" data-act="navmore" data-fid="nmore" aria-expanded="'+S.navMore+'">Langsung ke soal '+ic(S.navMore?'down':'up')+'</button>';
+  h+='<button class="qb sm" data-act="navtoggle" data-fid="ntg" aria-expanded="'+S.navOpen+'" aria-label="'+(S.navOpen?'Ciutkan':'Buka')+' navigasi cepat">'+(S.navOpen?'Ciutkan '+ic('down'):'Navigasi cepat '+ic('up'))+'</button></div>';
+  if(S.navOpen&&S.navMore){
+    h+='<div class="qrow qrow2"><span class="qt">Langsung ke soal:</span>';
+    [['verbal','Verbal'],['numerik','Numerik'],['figural','Figural'],['profil','Profil']].forEach(it=>{
+      const cur=S.mode==='peserta'&&S.screen==='test'&&S.sec===it[0];
+      h+='<button class="qb sm" data-act="navsec" data-sec="'+it[0]+'" data-fid="s'+it[0]+'"'+(cur?' aria-current="true"':'')+'>'+it[1]+'</button>';
+    });
+    h+='</div>';
+  }
+  return h;
+}
+
+/* A. Beranda */
+function screenHome(){
+  return '<div class="home">'+
+  '<section class="card hello"><p class="eyebrow">Selamat datang</p><h1>Hendra Saputra</h1>'+
+  '<dl class="idl"><dt>Nomor peserta</dt><dd class="mono">PD26-0417</dd><dt>Sesi</dt><dd>Sesi 2 · Ruang tes 3 (contoh)</dd><dt>Status</dt><dd><span class="status">Belum dimulai</span></dd></dl></section>'+
+  '<section class="tests">'+
+  '<article class="card tcard"><div class="tstep" aria-hidden="true">1</div><div><p class="eyebrow">Tes pertama</p><h2>Tes Kemampuan Bernalar</h2></div>'+
+  '<div class="facts"><span class="fact">3 subtes berurutan</span><span class="fact">45 butir</span><span class="fact">30 menit</span></div>'+
+  '<ul><li>Subtes 1 Verbal · 15 butir · 10 menit</li><li>Subtes 2 Numerik · 15 butir · 10 menit</li><li>Subtes 3 Figural · 15 butir · 10 menit</li></ul></article>'+
+  '<article class="card tcard"><div class="tstep" aria-hidden="true">2</div><div><p class="eyebrow">Tes kedua</p><h2>Profil Perilaku Kerja Pendamping</h2></div>'+
+  '<div class="facts"><span class="fact">64 butir</span><span class="fact">30 menit</span><span class="fact">satu timer</span></div>'+
+  '<ul><li>Pernyataan dengan skala 1–5 dan skenario pilihan tindakan</li><li>Dikerjakan setelah Tes 1 selesai</li></ul></article>'+
+  '<div class="startrow"><button class="btn primary lg" data-act="start" data-fid="start">Mulai Tes 1 '+ic('right')+'</button><span class="muted">Pastikan Anda duduk dengan nyaman. Waktu berjalan setelah subtes dimulai.</span></div>'+
+  '</section></div>';
+}
+
+/* B. Petunjuk Tes Bernalar */
+function screenIns1(){
+  const sel=S.ex.ins1;
+  const ex=['Piring','Makan','Dapur','Beras','Sendok'];
+  return '<div class="ins"><section class="card"><p class="eyebrow">Tes 1 dari 2</p><h1>Petunjuk Tes Kemampuan Bernalar</h1>'+
+  '<ol class="rules">'+
+  '<li><span>Tes terdiri dari <b>3 subtes berurutan</b>: Verbal, Numerik, dan Figural. Tiap subtes berisi 15 butir pilihan ganda A–E.</span></li>'+
+  '<li><span>Waktu tiap subtes <b>10 menit</b> (total 30 menit). Timer terlihat di bagian atas layar dan berubah warna saat sisa waktu kurang dari 2 menit.</span></li>'+
+  '<li><span>Setelah waktu habis, layar <b>pindah otomatis</b> ke subtes berikutnya.</span></li>'+
+  '<li><span>Anda <b>tidak dapat kembali</b> ke subtes yang sudah selesai.</span></li>'+
+  '<li><span><b>Tidak ada pengurangan nilai</b> untuk jawaban salah. Jawablah semua butir.</span></li>'+
+  '<li><span>Butir yang ragu-ragu dapat ditandai, lalu dibuka lagi lewat panel nomor selama waktu subtes masih ada.</span></li>'+
+  '</ol></section>'+
+  '<section><div class="exbox"><span class="exlbl">Contoh butir · tidak dinilai</span><h2 class="stem">Air : Minum = Nasi : ?</h2>'+
+  '<div class="opts" role="radiogroup" aria-label="Pilihan jawaban contoh">'+
+  ex.map((t,i)=>'<button class="opt" role="radio" aria-checked="'+(sel===i)+'" data-act="ex1" data-v="'+i+'" data-fid="ex'+i+'"><span class="lt">'+LET[i]+'</span><span>'+t+'</span></button>').join('')+
+  '</div></div>'+
+  '<label class="agree"><input type="checkbox" data-chk="ins1" data-fid="agree"'+(S.chk.ins1?' checked':'')+'><span>Saya mengerti petunjuk di atas.</span></label>'+
+  '<button class="btn primary lg" data-act="begin" data-sec="verbal" data-fid="begin"'+(S.chk.ins1?'':' disabled')+'>Mulai Subtes 1 (Verbal) '+ic('right')+'</button></section></div>';
+}
+
+/* E. Petunjuk Profil */
+function screenIns2(){
+  const sel=S.ex.ins2;
+  return '<div class="ins"><section class="card"><p class="eyebrow">Tes 2 dari 2</p><h1>Petunjuk Profil Perilaku Kerja</h1>'+
+  '<ol class="rules">'+
+  '<li><span>Tes berisi <b>64 butir</b> dengan <b>satu timer 30 menit</b> untuk seluruh butir.</span></li>'+
+  '<li><span>Ada dua bentuk butir: <b>pernyataan</b> yang dijawab dengan skala 1–5 (sangat tidak setuju sampai sangat setuju), dan <b>skenario</b> dengan empat pilihan tindakan.</span></li>'+
+  '<li><span>Jawablah sesuai keadaan diri Anda yang sebenarnya, atau tindakan yang menurut Anda paling tepat. Jangan terlalu lama pada satu butir.</span></li>'+
+  '<li><span>Anda dapat berpindah ke butir mana pun lewat panel nomor, dan menandai butir yang ragu-ragu.</span></li>'+
+  '<li><span>Jawablah semua butir sebelum waktu habis. Saat waktu habis, jawaban tersimpan otomatis.</span></li>'+
+  '</ol></section>'+
+  '<section><div class="exbox"><span class="exlbl">Contoh butir · tidak dinilai</span><h2 class="stem">Saya terbiasa merencanakan pekerjaan sebelum memulainya.</h2>'+
+  scaleHtml(sel,'ex2')+'</div>'+
+  '<label class="agree"><input type="checkbox" data-chk="ins2" data-fid="agree"'+(S.chk.ins2?' checked':'')+'><span>Saya mengerti petunjuk di atas.</span></label>'+
+  '<button class="btn primary lg" data-act="begin" data-sec="profil" data-fid="begin"'+(S.chk.ins2?'':' disabled')+'>Mulai Profil Perilaku Kerja '+ic('right')+'</button></section></div>';
+}
+
+/* Skala 1-5 */
+const SCL=['Sangat tidak setuju','Tidak setuju','Netral','Setuju','Sangat setuju'];
+function scaleHtml(sel,act){
+  let h='<div class="scale" role="radiogroup" aria-label="Skala 1 sampai 5">';
+  for(let i=1;i<=5;i++)h+='<button class="sc" role="radio" aria-checked="'+(sel===i)+'" aria-label="'+i+' — '+SCL[i-1]+'" data-act="'+act+'" data-v="'+i+'" data-fid="sc'+i+'">'+i+'</button>';
+  return h+'</div><div class="sends"><span>1 = Sangat tidak setuju</span><span>5 = Sangat setuju</span></div>';
+}
+
+/* Isi satu butir */
+function itemHtml(sec,idx){
+  const it=ITEMS[sec][idx],a=S.ans[sec][idx],n=idx+1;
+  const def=SECS[sec];
+  if(it.t==='mc'){
+    if(it.ph){
+      return '<h2 class="stem">Butir '+n+' (placeholder demo)</h2><div class="opts" role="radiogroup" aria-label="Pilihan jawaban">'+
+        LET.map((l,i)=>'<button class="opt" role="radio" aria-checked="'+(a===i)+'" data-act="pick" data-v="'+i+'" data-fid="o'+i+'"><span class="lt">'+l+'</span><span class="muted">Pilihan '+l+'</span></button>').join('')+'</div>'+
+        '<p class="phnote">Butir ini hanya pengisi. Di sistem sesungguhnya, di sini tampil soal subtes '+def.name+' ('+def.desc+'). Pilih jawaban apa saja untuk mencoba alur.</p>';
+    }
+    let h='';
+    if(it.lead)h+='<p class="lead">'+it.lead+'</p>';
+    if(it.html)h+=it.html;
+    if(it.fig)h+=it.fig;
+    h+='<h2 class="stem'+(it.fig||it.html?' qgap':'')+'">'+it.q+'</h2>';
+    if(it.ask)h+='<p class="ask">'+it.ask+'</p>';
+    h+='<div class="opts'+(it.figOpts?' figs':'')+'" role="radiogroup" aria-label="Pilihan jawaban">';
+    it.o.forEach((o,i)=>{
+      h+='<button class="opt" role="radio" aria-checked="'+(a===i)+'" data-act="pick" data-v="'+i+'" data-fid="o'+i+'"'+(it.figOpts?' aria-label="Pilihan '+LET[i]+'"':'')+'><span class="lt">'+LET[i]+'</span>'+(it.figOpts?'<span class="figtile">'+o+'</span>':'<span>'+o+'</span>')+'</button>';
+    });
+    return h+'</div>';
+  }
+  if(it.t==='lk'){
+    const q=it.ph?'Pernyataan ke-'+n+' (placeholder demo).':it.q;
+    return '<h2 class="stem">'+q+'</h2><p class="lead" style="margin-top:6px">Seberapa setuju Anda dengan pernyataan di atas?</p>'+scaleHtml(a,'pick')+
+      (it.ph?'<p class="phnote">Butir ini hanya pengisi. Di sistem sesungguhnya, di sini tampil pernyataan Profil Perilaku Kerja.</p>':'');
+  }
+  const sc=it.ph?'Skenario singkat ke-'+n+' (placeholder demo).':it.sc;
+  const opts=it.ph?['Tindakan A (placeholder)','Tindakan B (placeholder)','Tindakan C (placeholder)','Tindakan D (placeholder)']:it.o;
+  return '<div class="scenario"><span class="sl">Skenario</span>'+sc+'</div><h2 class="stem qgap">Tindakan yang paling tepat?</h2>'+
+    '<div class="opts" role="radiogroup" aria-label="Pilihan tindakan">'+
+    opts.map((o,i)=>'<button class="opt" role="radio" aria-checked="'+(a===i)+'" data-act="pick" data-v="'+i+'" data-fid="o'+i+'"><span class="lt">'+LET[i]+'</span><span>'+o+'</span></button>').join('')+'</div>'+
+    (it.ph?'<p class="phnote">Butir ini hanya pengisi. Di sistem sesungguhnya, di sini tampil skenario kerja pendamping.</p>':'');
+}
+function stats(sec){
+  const n=SECS[sec].n,ans=S.ans[sec],fl=S.flag[sec];
+  const un=[],fg=[];
+  for(let i=0;i<n;i++){if(ans[i]===undefined)un.push(i+1);if(fl[i])fg.push(i+1);}
+  return {n:n,done:n-un.length,un:un,fg:fg};
+}
+function gridHtml(sec){
+  const n=SECS[sec].n;let h='';
+  for(let i=0;i<n;i++){
+    const a=S.ans[sec][i]!==undefined,f=!!S.flag[sec][i];
+    h+='<button class="cell'+(a?' ans':'')+(f?' flag':'')+(i===S.cur?' cur':'')+'" data-act="goto" data-i="'+i+'" data-fid="g'+i+'" aria-label="Butir '+(i+1)+', '+(a?'sudah dijawab':'belum dijawab')+(f?', ditandai ragu-ragu':'')+'"'+(i===S.cur?' aria-current="true"':'')+'>'+(i+1)+(f?'<span class="fm" aria-hidden="true"></span>':'')+'</button>';
+  }
+  return h;
+}
+
+/* C. Layar soal */
+function screenTest(){
+  const sec=S.sec,def=SECS[sec],n=def.n,i=S.cur,st=stats(sec);
+  const isB=def.test==='b';
+  const steps=isB?'<ol class="steps" aria-label="Urutan subtes">'+ORDER.map((k,ix)=>{
+    const cur=ORDER.indexOf(sec);
+    const cls=ix<cur?'done':ix===cur?'on':'';
+    return '<li class="'+cls+'"'+(ix===cur?' aria-current="step"':'')+'>'+(ix<cur?ic('check'):'')+SECS[k].no+'. '+SECS[k].name+'</li>';
+  }).join('')+'</ol>':'';
+  const head='<section class="thead" aria-label="Informasi tes">'+
+    '<div><p class="eyebrow">'+(isB?'Tes 1 · Kemampuan Bernalar':'Tes 2 · Profil Perilaku Kerja')+'</p><h1>'+(isB?'Subtes '+def.no+' · '+def.name:'Profil Perilaku Kerja Pendamping')+'</h1>'+steps+'</div>'+
+    '<div class="prog"><p class="pl">Butir <b class="num">'+(i+1)+'</b> dari <b class="num">'+n+'</b></p><div class="pbar" role="progressbar" aria-valuemin="1" aria-valuemax="'+n+'" aria-valuenow="'+(i+1)+'" aria-label="Posisi butir"><i style="width:'+((i+1)/n*100)+'%"></i></div></div>'+
+    '<div class="timer" id="timer" role="timer"><span class="tl">'+ic('clock')+'Sisa waktu</span><span class="tval" id="tval">'+mmss(S.remaining)+'</span><span class="tn">Kurang dari 2 menit</span></div></section>';
+  const last=i===n-1;
+  const flagged=!!S.flag[sec][i];
+  const actions='<div class="actions"><button class="btn" data-act="prev" data-fid="prev"'+(i===0?' disabled':'')+'>'+ic('left')+'Sebelumnya</button>'+
+    '<div class="grp"><button class="btn flagbtn" data-act="flag" data-fid="flag" aria-pressed="'+flagged+'">'+ic('flag')+(flagged?'Hapus tanda ragu-ragu':'Tandai ragu-ragu')+'</button>'+
+    (last?'<button class="btn primary" data-act="finish" data-fid="finish">'+(isB?'Selesai subtes':'Selesai tes')+ic('check')+'</button>':'<button class="btn primary" data-act="next" data-fid="next">Berikutnya'+ic('right')+'</button>')+'</div></div>';
+  const side='<aside class="card side" aria-label="Panel nomor butir"><div class="democtl"><span>Kontrol demo</span><button data-act="speed" data-fid="speed">Percepat timer · ×'+S.speed+'</button></div><h3>Nomor butir</h3><div class="ngrid '+(n>20?'c8':'c5')+'">'+gridHtml(sec)+'</div>'+
+    '<ul class="legend"><li><span class="sw a"></span>Sudah dijawab</li><li><span class="sw"></span>Belum dijawab</li><li><span class="sw f"></span>Ragu-ragu</li><li><span class="sw c"></span>Sedang dibuka</li></ul>'+
+    '<p class="counts num">Dijawab '+st.done+' · Belum '+(n-st.done)+' · Ragu-ragu '+st.fg.length+'</p>'+
+    (isB?'<p class="rule">Subtes yang sudah selesai tidak dapat dibuka kembali.</p>':'<p class="rule">Semua butir dapat dibuka kembali selama waktu masih ada.</p>')+
+    '</aside>';
+  return head+'<div class="tbody"><div><article class="card qcard">'+itemHtml(sec,i)+'</article>'+actions+'</div>'+side+'</div>';
+}
+
+/* D. Transisi */
+function screenTrans(){
+  const t=S.trans||{from:'verbal',next:'numerik',auto:false};
+  const from=SECS[t.from];
+  const sav=t.auto?'Waktu subtes habis. Jawaban Anda tersimpan.':'Jawaban Anda tersimpan.';
+  if(t.next==='profil'){
+    return '<section class="card center"><div class="bigic">'+ic('check')+'</div><h1>Subtes '+from.no+' selesai.</h1><p>'+sav+' Seluruh Tes Kemampuan Bernalar telah selesai.</p>'+
+      '<div class="nextbox"><b>Berikutnya: Profil Perilaku Kerja</b>64 butir · satu timer 30 menit</div>'+
+      '<button class="btn primary lg" data-act="transnext" data-fid="tn">Lanjut ke petunjuk Tes 2 '+ic('right')+'</button></section>';
+  }
+  const nx=SECS[t.next];
+  return '<section class="card center"><div class="bigic">'+ic('check')+'</div><h1>Subtes '+from.no+' selesai.</h1><p>'+sav+'</p>'+
+    '<div class="nextbox"><b>Subtes '+nx.no+' '+nx.name+' dimulai</b>Waktu '+nx.min+' menit · '+nx.n+' butir. Anda tidak dapat kembali ke Subtes '+from.no+'.</div>'+
+    '<button class="btn primary lg" data-act="transnext" data-fid="tn">Lanjut ke Subtes '+nx.no+' '+ic('right')+'</button></section>';
+}
+
+/* F. Selesai (peserta tidak melihat skor) */
+function screenDone(){
+  return '<section class="card center"><div class="bigic">'+ic('check')+'</div><h1>Jawaban Anda telah tersimpan.</h1><p>Terima kasih.</p><p class="muted" style="margin-top:12px">Anda dapat menutup halaman ini.</p></section>';
+}
+
+/* Dialog */
+function shortList(a){return a.length>8?a.slice(0,8).join(', ')+', dan seterusnya':a.join(', ');}
+function overlayRender(){
+  const o=$('#overlay');
+  if(S.timeup){
+    const nxt=S.sec==='profil'?'Jawaban Anda disimpan.':S.sec==='figural'?'Berpindah ke langkah berikutnya.':'Berpindah ke subtes berikutnya.';
+    o.innerHTML='<div class="dialog" role="alertdialog" aria-modal="true" aria-labelledby="dT"><h2 id="dT">Waktu habis</h2><p>Jawaban Anda tersimpan otomatis. '+nxt+'</p></div>';
+    o.hidden=false;return;
+  }
+  if(S.modal==='finish'){
+    const st=stats(S.sec),b=SECS[S.sec].test==='b';
+    o.innerHTML='<div class="dialog" role="dialog" aria-modal="true" aria-labelledby="dT"><h2 id="dT">Selesaikan '+(b?'subtes':'tes')+' ini?</h2>'+
+      '<p>Butir belum dijawab: <span class="big num">'+st.un.length+'</span>'+(st.un.length?' (nomor '+shortList(st.un)+')':'')+'</p>'+
+      (st.fg.length?'<p>Butir ditandai ragu-ragu: <b class="num">'+st.fg.length+'</b></p>':'')+
+      '<p class="muted">Setelah dikonfirmasi, Anda tidak dapat kembali ke '+(b?'subtes':'tes')+' ini.</p>'+
+      '<div class="btns"><button class="btn" data-act="cancel" data-fid="dcancel">Kembali memeriksa</button><button class="btn primary" data-act="confirm" data-fid="dok">Ya, selesaikan</button></div></div>';
+    o.hidden=false;return;
+  }
+  o.hidden=true;o.innerHTML='';
+}
+
+/* ---------- Panel panitia ---------- */
+function visibleRows(){
+  let rows=PART.filter(p=>(PS.flt==='all'||p.flag===PS.flt)&&(!PS.q||(p.nama+' '+p.id).toLowerCase().includes(PS.q.toLowerCase())));
+  const sev={hijau:0,kuning:1,merah:2};
+  const val=p=>PS.key==='nama'?p.nama.toLowerCase():PS.key==='id'?p.id:PS.key==='bern'?p.bern:PS.key==='pp'?p.pp:PS.key==='flag'?sev[p.flag]:PS.key==='gab'?p.gab:p.no;
+  rows.sort((a,b)=>{const x=val(a),y=val(b);return (x<y?-1:x>y?1:a.no-b.no)*PS.dir;});
+  return rows;
+}
+const FLAGIC={hijau:'check',kuning:'alert',merah:'x'};
+const FLAGNM={hijau:'Hijau',kuning:'Kuning',merah:'Merah'};
+const pill=f=>'<span class="pill '+f+'">'+ic(FLAGIC[f])+FLAGNM[f]+'</span>';
+function tableHtml(){
+  const rows=visibleRows();
+  const cols=[['no','No'],['id','Nomor peserta'],['nama','Nama'],['bern','Bernalar'],['pp','Profil Perilaku'],['flag','Flag'],['gab','Gabungan indikatif']];
+  let h='<div class="tablewrap"><table class="rt"><thead><tr>'+cols.map(c=>'<th scope="col"'+(PS.key===c[0]?' aria-sort="'+(PS.dir>0?'ascending':'descending')+'"':'')+'><button class="thb" data-act="sort" data-k="'+c[0]+'" data-fid="th'+c[0]+'">'+c[1]+'</button></th>').join('')+'</tr></thead><tbody>';
+  if(!rows.length)h+='<tr><td colspan="7"><div class="empty">Tidak ada peserta yang cocok dengan filter.</div></td></tr>';
+  rows.forEach(p=>{
+    h+='<tr data-act="row" data-no="'+p.no+'"'+(PS.sel===p.no?' class="sel" aria-selected="true"':'')+'>'+
+      '<td class="num">'+p.no+'</td><td class="mono">'+p.id+'</td>'+
+      '<td><button class="nm" data-act="row" data-no="'+p.no+'" data-fid="r'+p.no+'">'+p.nama+'</button></td>'+
+      '<td><span class="sn num">'+p.bern+'</span><span class="mb b"><i style="width:'+p.bern+'%"></i></span></td>'+
+      '<td><span class="sn num">'+p.pp+'</span><span class="mb p"><i style="width:'+p.pp+'%"></i></span></td>'+
+      '<td>'+pill(p.flag)+'</td>'+
+      '<td><span class="sn num">'+fmt(p.gab.toFixed(1))+'</span></td></tr>';
+  });
+  return h+'</tbody></table></div>';
+}
+function radarSvg(p){
+  const cx=240,cy=172,R=108,low=lowest(p);
+  const pt=(i,v)=>{const a=-Math.PI/2+i*Math.PI/3,r=R*v/100;return [cx+r*Math.cos(a),cy+r*Math.sin(a)];};
+  let s='<svg viewBox="0 0 480 350" role="img" aria-label="Grafik radar enam aspek Profil Perilaku Kerja">';
+  [25,50,75,100].forEach(v=>{s+='<polygon points="'+[0,1,2,3,4,5].map(i=>pt(i,v).map(x=>x.toFixed(1)).join(',')).join(' ')+'" fill="none" stroke="var(--line)" stroke-width="'+(v===100?1.5:1)+'"/>';});
+  for(let i=0;i<6;i++){const e=pt(i,100);s+='<line x1="'+cx+'" y1="'+cy+'" x2="'+e[0].toFixed(1)+'" y2="'+e[1].toFixed(1)+'" stroke="var(--line)" stroke-width="1"/>';}
+  s+='<polygon points="'+p.asp.map((v,i)=>pt(i,v).map(x=>x.toFixed(1)).join(',')).join(' ')+'" fill="var(--accent)" fill-opacity=".22" stroke="var(--accent)" stroke-width="2.5" stroke-linejoin="round"/>';
+  p.asp.forEach((v,i)=>{const q=pt(i,v);s+='<circle cx="'+q[0].toFixed(1)+'" cy="'+q[1].toFixed(1)+'" r="4.5" fill="var(--accent)" stroke="var(--surface)" stroke-width="1.5"/>';});
+  for(let i=0;i<6;i++){
+    const a=-Math.PI/2+i*Math.PI/3,lx=cx+(R+18)*Math.cos(a),ly=cy+(R+18)*Math.sin(a);
+    const anchor=Math.cos(a)>.3?'start':Math.cos(a)<-.3?'end':'middle';
+    const lines=ASPL[i].length+1,lh=17;
+    let y0;
+    if(Math.sin(a)<-.9)y0=ly-(lines-1)*lh-4;else if(Math.sin(a)>.9)y0=ly+14;else y0=ly-(lines-1)*lh/2+4;
+    s+='<text x="'+lx.toFixed(1)+'" text-anchor="'+anchor+'">';
+    ASPL[i].forEach((t,k)=>{s+='<tspan class="rl" x="'+lx.toFixed(1)+'" y="'+(y0+k*lh).toFixed(1)+'">'+t.replace('&','&amp;')+'</tspan>';});
+    s+='<tspan class="rv'+(low.includes(i)?' lo':'')+'" x="'+lx.toFixed(1)+'" y="'+(y0+ASPL[i].length*lh).toFixed(1)+'">'+p.asp[i]+'</tspan></text>';
+  }
+  return s+'</svg>';
+}
+function detailHtml(p){
+  const low=lowest(p);
+  const subN=['Verbal','Numerik','Figural'];
+  const vrows=(()=>{
+    const v=p.v,r=[];
+    r.push({l:'Cek perhatian',t:v.att[0]+' dari '+v.att[1]+' lolos',s:v.att[0]===v.att[1]?'ok':'warn'});
+    const bad=v.cons[1]-v.cons[0];
+    r.push({l:'Konsistensi pasangan butir',t:v.cons[0]+' dari '+v.cons[1]+' pasangan sejalan',s:bad===0?'ok':bad===1?'warn':'bad'});
+    r.push({l:'Kecenderungan menjawab terlalu positif',t:'Rata-rata skala kesan baik '+fmt(v.sd.toFixed(1))+' dari 5'+(v.sd>=4.5?' (tinggi)':''),s:v.sd>=4.5?'warn':'ok'});
+    return r;
+  })();
+  const vi={ok:'check',warn:'alert',bad:'x'};
+  const reason=p.nsign===0?'Tidak ada tanda masalah pada cek perhatian, konsistensi jawaban, maupun kecenderungan menjawab terlalu positif.':
+    (p.nsign===1?'Satu tanda: ':'Beberapa tanda: ')+p.signs.join('; ')+'.';
+  return '<section class="card dh"><div><h2>'+p.nama+'</h2><div class="meta"><span class="mono" style="font-family:var(--font-mono)">'+p.id+'</span>'+pill(p.flag)+'</div></div>'+
+    '<div class="gab"><div class="gl">Skor gabungan indikatif</div><div class="gv num">'+fmt(p.gab.toFixed(1))+'</div></div></section>'+
+    '<div class="dgrid"><div class="dcol">'+
+    '<section class="card dc"><h3>Tes Kemampuan Bernalar <small>benar ÷ 45 × 100</small></h3>'+
+    '<div class="scorebig"><b class="num">'+p.bern+'</b><span>/ 100 · '+p.benar+' benar dari 45 butir</span></div>'+
+    p.sub.map((b,i)=>'<div class="brow"><span class="bn">'+subN[i]+'</span><div class="bt b"><i style="width:'+(b/15*100)+'%"></i></div><span class="bv num">'+b+'/15</span></div>').join('')+'</section>'+
+    '<section class="card dc"><h3>Flag validitas '+pill(p.flag)+'</h3>'+
+    vrows.map(r=>'<div class="vrow"><span class="vi '+r.s+'">'+ic(vi[r.s])+'</span><span class="vl">'+r.l+'</span><span class="vv">'+r.t+'</span></div>').join('')+
+    '<p class="reason">'+reason+'</p>'+
+    '<div class="fnote"><b>Flag hanya catatan untuk pewawancara, bukan diskualifikasi otomatis.</b> Hijau = tanpa tanda · Kuning = satu tanda · Merah = beberapa tanda. Ambang batas masih sementara.</div></section>'+
+    '</div><div class="dcol">'+
+    '<section class="card dc"><h3>Profil Perilaku Kerja <small>rata-rata enam aspek</small></h3>'+
+    '<div class="scorebig"><b class="num">'+p.pp+'</b><span>/ 100</span></div>'+
+    '<div class="pfwrap"><div class="radar">'+radarSvg(p)+'</div><div class="alist">'+
+    p.asp.map((v,i)=>'<div class="arow'+(low.includes(i)?' lo':'')+'"><span class="an">'+ASPH[i]+'</span><div class="bt"><i style="width:'+v+'%"></i></div><span class="bv num">'+v+'</span></div>').join('')+
+    '</div></div></section>'+
+    '<section class="card dc"><h3>Saran bahan wawancara <small>aspek dengan skor terendah</small></h3><div class="saran">'+
+    low.map(i=>'<div class="sa"><h4>'+ASPH[i]+'<span class="num">'+p.asp[i]+'</span></h4><p>'+SARAN[i]+'</p></div>').join('')+
+    '</div></section></div></div>';
+}
+function panelHtml(){
+  const cnt=f=>f==='all'?PART.length:PART.filter(p=>p.flag===f).length;
+  const chips=[['all','Semua'],['hijau','Hijau'],['kuning','Kuning'],['merah','Merah']].map(c=>'<button class="chip" data-act="flt" data-v="'+c[0]+'" data-fid="f'+c[0]+'" aria-pressed="'+(PS.flt===c[0])+'">'+c[1]+' <b>'+cnt(c[0])+'</b></button>').join('');
+  return '<div class="panel"><div class="phead"><div><p class="eyebrow">Untuk panitia dan pewawancara</p><h1>Hasil peserta</h1></div></div>'+
+    '<div class="toolbar"><div class="chips" role="group" aria-label="Filter flag validitas">'+chips+'</div>'+
+    '<label class="search"><span class="sr">Cari peserta</span><input id="q" type="search" placeholder="Cari nama atau nomor peserta" value="'+PS.q.replace(/"/g,'&quot;')+'"></label></div>'+
+    '<div id="ptable">'+tableHtml()+'</div>'+
+    '<p class="note">'+ic('info')+'<span>Bobot tiap tes terhadap nilai total CBT belum ditetapkan; skor gabungan di demo = rata-rata sederhana. Klik baris untuk melihat detail peserta.</span></p>'+
+    '<div id="pdetail">'+detailHtml(PART.find(p=>p.no===PS.sel))+'</div></div>';
+}
+
+/* ---------- Render ---------- */
+const SCREENS={home:screenHome,ins1:screenIns1,ins2:screenIns2,test:screenTest,trans:screenTrans,done:screenDone};
+function render(){
+  const ae=document.activeElement;
+  const fid=ae&&ae.dataset?ae.dataset.fid:null;
+  const inQ=ae&&ae.id==='q';
+  $('#app').dataset.mode=S.mode;
+  $('#topbar').innerHTML=topbarHtml();
+  if(!inQ)$('#stage').innerHTML=S.mode==='panitia'?panelHtml():SCREENS[S.screen]();
+  $('#qnav').innerHTML=navHtml();
+  overlayRender();
+  if(S.modal==='finish'){const d=$('[data-fid="dcancel"]');if(d)d.focus();}
+  else if(fid){const el=document.querySelector('[data-fid="'+fid+'"]');if(el)el.focus({preventScroll:true});}
+  if(S.mode==='peserta'&&S.screen==='test')updateTimer();
+}
+function renderTable(){$('#ptable').innerHTML=tableHtml();}
+function renderPanelParts(){$('#ptable').innerHTML=tableHtml();$('#pdetail').innerHTML=detailHtml(PART.find(p=>p.no===PS.sel));}
+
+/* ---------- Aksi ---------- */
+const H={
+  start(){go('ins1');},
+  ex1(t){S.ex.ins1=+t.dataset.v;render();},
+  ex2(t){S.ex.ins2=+t.dataset.v;render();},
+  begin(t){S.navOpen=false;S.navMore=false;startSec(t.dataset.sec);},
+  pick(t){S.ans[S.sec][S.cur]=+t.dataset.v;render();},
+  prev(){if(S.cur>0){S.cur--;render();window.scrollTo(0,0);}},
+  next(){if(S.cur<SECS[S.sec].n-1){S.cur++;render();window.scrollTo(0,0);}},
+  goto(t){S.cur=+t.dataset.i;render();window.scrollTo(0,0);},
+  flag(){const f=S.flag[S.sec];if(f[S.cur])delete f[S.cur];else f[S.cur]=true;render();},
+  finish(){S.modal='finish';render();},
+  cancel(){S.modal=null;render();const b=$('[data-fid="finish"]');if(b)b.focus();},
+  confirm(){finishSection(false);},
+  speed(){const sp=[1,10,60];S.speed=sp[(sp.indexOf(S.speed)+1)%sp.length];render();},
+  transnext(){if(S.trans.next==='profil')go('ins2');else{S.navOpen=false;S.navMore=false;startSec(S.trans.next);}},
+  mode(){S.mode=S.mode==='panitia'?'peserta':'panitia';render();window.scrollTo(0,0);},
+  nav(t){
+    const to=t.dataset.to;
+    if(to==='panel'){S.mode='panitia';render();window.scrollTo(0,0);return;}
+    S.mode='peserta';
+    if(to==='home')resetAnswers();
+    go(to);
+  },
+  navsec(t){startSec(t.dataset.sec);},
+  navtoggle(){S.navOpen=!S.navOpen;render();},
+  navmore(){S.navMore=!S.navMore;render();},
+  sort(t){const k=t.dataset.k;if(PS.key===k)PS.dir=-PS.dir;else{PS.key=k;PS.dir=(k==='bern'||k==='pp'||k==='gab')?-1:1;}renderTable();const b=document.querySelector('[data-fid="th'+k+'"]');if(b)b.focus();},
+  flt(t){PS.flt=t.dataset.v;render();},
+  row(t){PS.sel=+t.dataset.no;renderPanelParts();}
+};
+document.addEventListener('click',e=>{
+  const t=e.target.closest('[data-act]');
+  if(!t||t.disabled)return;
+  const f=H[t.dataset.act];if(f)f(t,e);
+});
+document.addEventListener('change',e=>{
+  const c=e.target.closest('[data-chk]');
+  if(c){S.chk[c.dataset.chk]=c.checked;render();}
+});
+document.addEventListener('input',e=>{
+  if(e.target.id==='q'){PS.q=e.target.value;renderTable();}
+});
+document.addEventListener('keydown',e=>{
+  if(S.modal==='finish'){
+    if(e.key==='Escape'){H.cancel();return;}
+    if(e.key==='Tab'){
+      const bs=[...document.querySelectorAll('#overlay button')];if(!bs.length)return;
+      const i=bs.indexOf(document.activeElement);
+      e.preventDefault();
+      bs[(i+(e.shiftKey?-1:1)+bs.length)%bs.length].focus();
+    }
+    return;
+  }
+  if(S.mode!=='peserta'||S.screen!=='test'||S.timeup)return;
+  const tag=(e.target.tagName||'').toLowerCase();
+  if(tag==='input'||tag==='textarea'||e.ctrlKey||e.metaKey||e.altKey)return;
+  const it=ITEMS[S.sec][S.cur];
+  if(e.key==='ArrowRight'){H.next();return;}
+  if(e.key==='ArrowLeft'){H.prev();return;}
+  let v=null;
+  if(it.t==='lk'&&/^[1-5]$/.test(e.key))v=+e.key;
+  else if(it.t!=='lk'){
+    const max=it.t==='sjt'?4:5,ix='abcde'.indexOf(e.key.toLowerCase());
+    if(ix>=0&&ix<max&&e.key.length===1)v=ix;
+  }
+  if(v!==null){S.ans[S.sec][S.cur]=v;render();}
+});
+
+S.navOpen=window.innerWidth>=700;
+render();
+})();
+</script>
+
+</body></html>
